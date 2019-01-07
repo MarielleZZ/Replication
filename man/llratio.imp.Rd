@@ -4,7 +4,7 @@
 \description{
 Computes the log likelihood ratio and p-value for data that is imputed with mice}
 \usage{
-llratio.imp(step2step3,imp,model,Amat,bvec=NULL,E=0,effectsize=FALSE,s.i,
+llratio.imp(step2step3,imp,model,R,r=NULL,E=0,effectsize=FALSE,s.i,
             sample.cov = NULL, sample.mean = NULL, sample.nobs = NULL,
             group = NULL, cluster = NULL, constraints = "", WLS.V = NULL, NACOV = NULL,
             bayes=FALSE,dp=NULL,nchains=2)
@@ -13,8 +13,8 @@ llratio.imp(step2step3,imp,model,Amat,bvec=NULL,E=0,effectsize=FALSE,s.i,
   \item{step2step3}{The likelihood ratio values for simulated data as obtained with the ppc.step2step3 function.}
   \item{imp}{A mids object created with the R-package mice}
   \item{model}{The lavaan model that is to be applied to the data}
-  \item{Amat}{A p by q matrix, where p is the number of free parameters in the model, and q is the number of constraints to be imposed on the model. Each row represents one constraint.}
-  \item{bvec}{A vector of length p holding the minimimum sum for each row in Amat.}
+  \item{R}{A p by q matrix, where p is the number of free parameters in the model, and q is the number of constraints to be imposed on the model. Each row represents one constraint.}
+  \item{r}{A vector of length p holding the minimimum sum for each row in R.}
   \item{E}{Numeric; the first E constraints are treated as equality constraints, all further as inequality constraints. Default value = 0.}
   \item{effectsize}{Logic; if TRUE, the constraints concern effectsizes.}
   \item{s.i}{A vector of length p holding with indices for the (pooled) standard deviation parameters with which the effect sizes should be computed}
@@ -74,14 +74,14 @@ pT <- step1.reg$pT
 reg.coef.ind <- which(pT$lhs=="y"&pT$op=="~"&pT$rhs=="x") #identify regression coefficient
 free.i <- which(pT$free!=0)
 
-Amat <- t(rep(0,times=length(free.i)))
-Amat[pT$free[which(pT$id==reg.coef.ind)]] <- 1
-bvec=c(pT$est[reg.coef.ind])        #regression coefficient => estimate
+R <- t(rep(0,times=length(free.i)))
+R[pT$free[which(pT$id==reg.coef.ind)]] <- 1
+r=c(pT$est[reg.coef.ind])        #regression coefficient => estimate
 
-step23.reg <- ppc.step2step3(y.s=step1.reg$y.s,obs=FALSE,model=model,Amat=Amat,bvec=bvec)
+step23.reg <- ppc.step2step3(y.s=step1.reg$y.s,obs=FALSE,model=model,R=R,r=r)
 
 imp <- mice(y.r,maxit=2,m=3)
-llratio.imp(step2step3=step23.reg,imp=imp,model=model,Amat=Amat,bvec=bvec)
+llratio.imp(step2step3=step23.reg,imp=imp,model=model,R=R,r=r)
 }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

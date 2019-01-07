@@ -1,4 +1,4 @@
-llratio.imp <- function(step2step3,imp,model,Amat,bvec=NULL,E=0,effectsize=FALSE, s.i,
+llratio.imp <- function(step2step3,imp,model,R,r=NULL,E=0,effectsize=FALSE, s.i,
                         sample.cov = NULL, sample.mean = NULL, sample.nobs = NULL,
                         group = NULL, cluster = NULL, constraints = "", WLS.V = NULL, NACOV = NULL,
                         bayes=FALSE,dp=NULL,nchains=2){
@@ -32,11 +32,11 @@ llratio.imp <- function(step2step3,imp,model,Amat,bvec=NULL,E=0,effectsize=FALSE
 
       if(effectsize==TRUE){
         s <- vector()
-        for (j in 1:length(bvec)){s[j] <- pT.r$est[s.i[j]]}
-        bvec <- bvec*s
+        for (j in 1:length(r)){s[j] <- pT.r$est[s.i[j]]}
+        r <- r*s
       }
 
-      llratio.i[i] <-tryCatch(llratio.f(BKcov=BKcov.r,Q=Q.r,Amat=Amat,bvec=bvec,E=E),
+      llratio.i[i] <-tryCatch(llratio.f(BKcov=BKcov.r,Q=Q.r,R=R,r=r,E=E),
                               error=function(e) NA)
     }
   }else{
@@ -64,11 +64,11 @@ llratio.imp <- function(step2step3,imp,model,Amat,bvec=NULL,E=0,effectsize=FALSE
 
       if(effectsize==TRUE){
         s <- vector()
-        for (j in 1:length(bvec)){s[j] <- pT$est[s.i[j]]}
-        bvec <- bvec*s
+        for (j in 1:length(r)){s[j] <- pT$est[s.i[j]]}
+        r <- r*s
       }
 
-      llratio.i[i] <- tryCatch(llratio.f(BKcov=BKcov.r,Q=Q.r,Amat=Amat,bvec=bvec,E=E),
+      llratio.i[i] <- tryCatch(llratio.f(BKcov=BKcov.r,Q=Q.r,R=R,r=r,E=E),
                                error=function(e) NA)
     }}
 
