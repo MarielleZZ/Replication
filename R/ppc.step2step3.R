@@ -1,5 +1,5 @@
 ppc.step2step3 <- function(y.s, y.r, model=model,
-                           Amat, bvec = NULL, E = 0, effectsize = FALSE, s.i,
+                           R, r = NULL, E = 0, effectsize = FALSE, s.i,
                            ordered = NULL, sample.cov = NULL, sample.mean = NULL, sample.nobs = NULL,
                            group = NULL, cluster = NULL, constraints = "", WLS.V = NULL, NACOV = NULL,
                            bayes=FALSE,dp=NULL,nchains=2,obs=TRUE,convergence="manual"){
@@ -35,19 +35,19 @@ ppc.step2step3 <- function(y.s, y.r, model=model,
 
       if(effectsize==TRUE){
         s <- vector()
-        for (j in 1:length(bvec)){s[j] <- pT$est[s.i[j]]}
-        bvec.e <- bvec*s
+        for (j in 1:length(r)){s[j] <- pT$est[s.i[j]]}
+        r.e <- r*s
 
-        llratio.s[[i]] <-tryCatch(llratio.f(BKcov=BKcov,Q=Q,Amat=Amat,bvec=bvec.e,E=E),
+        llratio.s[[i]] <-tryCatch(llratio.f(BKcov=BKcov,Q=Q,R=R,r=r.e,E=E),
                                   error=function(e) NA)
 
         llratio.s <- na.omit(unlist(llratio.s))
       }else{
 
-      llratio.s[[i]] <-tryCatch(llratio.f(BKcov=BKcov,Q=Q,Amat=Amat,bvec=bvec,E=E),
-                              error=function(e) NA)
+        llratio.s[[i]] <-tryCatch(llratio.f(BKcov=BKcov,Q=Q,R=R,r=r,E=E),
+                                  error=function(e) NA)
 
-      llratio.s <- na.omit(unlist(llratio.s))}
+        llratio.s <- na.omit(unlist(llratio.s))}
     }
   }else{
     for (i in 1:length(y.s)){
@@ -69,18 +69,18 @@ ppc.step2step3 <- function(y.s, y.r, model=model,
 
       if(effectsize==TRUE){
         s <- vector()
-        for (j in 1:length(bvec)){s[j] <- pT$est[s.i[j]]}
-        bvec.e <- bvec*s
+        for (j in 1:length(r)){s[j] <- pT$est[s.i[j]]}
+        r.e <- r*s
 
-        llratio.s[[i]] <-tryCatch(llratio.f(BKcov=BKcov,Q=Q,Amat=Amat,bvec=bvec.e,E=E),
+        llratio.s[[i]] <-tryCatch(llratio.f(BKcov=BKcov,Q=Q,R=R,r=r.e,E=E),
                                   error=function(e) NA)
       }else{
 
-      llratio.s[[i]] <-tryCatch(llratio.f(BKcov=BKcov,Q=Q,Amat=Amat,bvec=bvec,E=E),
-                              error=function(e) NA)
+        llratio.s[[i]] <-tryCatch(llratio.f(BKcov=BKcov,Q=Q,R=R,r=r,E=E),
+                                  error=function(e) NA)
       }
 
-      }
+    }
 
     llratio.s <- na.omit(unlist(llratio.s))
 
@@ -107,11 +107,11 @@ ppc.step2step3 <- function(y.s, y.r, model=model,
 
     if(effectsize==TRUE){
       s <- vector()
-      for (j in 1:length(bvec)){s[j] <- pT.r$est[s.i[j]]}
-      bvec.e <- bvec*s
-      llratio.r <- llratio.f(BKcov=BKcov.r,Q=Q.r,Amat=Amat,bvec=bvec.e,E=E)
+      for (j in 1:length(r)){s[j] <- pT.r$est[s.i[j]]}
+      r.e <- r*s
+      llratio.r <- llratio.f(BKcov=BKcov.r,Q=Q.r,R=R,r=r.e,E=E)
     }else{
-    llratio.r <- llratio.f(BKcov=BKcov.r,Q=Q.r,Amat=Amat,bvec=bvec,E=E)}
+      llratio.r <- llratio.f(BKcov=BKcov.r,Q=Q.r,R=R,r=r,E=E)}
 
     #plot results
     llratio.s <<- llratio.s

@@ -4,7 +4,7 @@
 \description{
 Calculates a likelihood ratio (D) for new data (y.r) and predicted data (y.s) according to the proposed constraints, and generates a prior predictive p-value.}
 \usage{
-ppc.step2step3(y.s, y.r, model = model, Amat, bvec = NULL, E = 0,
+ppc.step2step3(y.s, y.r, model = model, R, r = NULL, E = 0,
         effectsize = FALSE, s.i,
         ordered = NULL, sample.cov = NULL, sample.mean = NULL, sample.nobs = NULL,
         group = NULL, cluster = NULL, constraints = "", WLS.V = NULL, NACOV = NULL,
@@ -15,8 +15,8 @@ ppc.step2step3(y.s, y.r, model = model, Amat, bvec = NULL, E = 0,
   \item{y.s}{A list containing all y.s.}
   \item{y.r}{A data.frame with the new data.}
   \item{model}{The (b)lavaan model that is to be fitted to the data.}
-  \item{Amat}{A p by q matrix, where p is the number of free parameters in the model, and q is the number of constraints to be imposed on the model. Each row represents one constraint.}
-  \item{bvec}{A vector of length p holding the minimimum sum for each row in Amat.}
+  \item{R}{A p by q matrix, where p is the number of free parameters in the model, and q is the number of constraints to be imposed on the model. Each row represents one constraint.}
+  \item{r}{A vector of length p holding the minimimum sum for each row in R.}
   \item{E}{Numeric; the first E constraints are treated as equality constraints, all further as inequality constraints. Default value = 0.}
   \item{effectsize}{Logic; if TRUE, the constraints concern effectsizes.}
   \item{s.i}{A vector of length p holding with indices for the (pooled) standard deviation parameters with which the effect sizes should be computed}
@@ -77,11 +77,11 @@ pT <- step1.reg$pT
 reg.coef.ind <- which(pT$lhs=="y"&pT$op=="~"&pT$rhs=="x") #identify regression coefficient
 free.i <- which(pT$free!=0)
 
-Amat <- t(rep(0,times=length(free.i)))
-Amat[pT$free[which(pT$id==reg.coef.ind)]] <- 1
-bvec=c(pT$est[reg.coef.ind])        #regression coefficient => estimate
+R <- t(rep(0,times=length(free.i)))
+R[pT$free[which(pT$id==reg.coef.ind)]] <- 1
+r=c(pT$est[reg.coef.ind])        #regression coefficient => estimate
 
-step23.reg <- ppc.step2step3(y.s=step1.reg$y.s,y.r=y.r,model=model,Amat=Amat,bvec=bvec)
+step23.reg <- ppc.step2step3(y.s=step1.reg$y.s,y.r=y.r,model=model,R=R,r=r)
 }
 }
 \keyword{htest }% use one of  RShowDoc("KEYWORDS")
