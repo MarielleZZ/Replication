@@ -6,7 +6,7 @@ ppc.step2step3 <- function(y.s, y.r, model=model,
 
   #compute likelihood ratio (i.e., D) for all y.s and for y.r
 
-  #f(D_y[sim])
+  #f(D_y[s])
   #limited number of posterior samples (saves comp. time), replace=TRUE (!)
   #sample.r <- sample(length(y.s),n.sample.r,replace=TRUE)
 
