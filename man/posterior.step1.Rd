@@ -8,7 +8,8 @@ These samples form the basis for the predictive distribution in the prior predic
 posterior.step1(y.o, model,
     sample.cov = NULL, sample.mean = NULL, sample.nobs = NULL,
     group = NULL, constraints = "", WLS.V = NULL, NACOV = NULL,
-    nchains=2, nburnin, nsample, dp = NULL, missingdata.o = FALSE, imp)
+    nchains=2, nburnin, nsample, dp = NULL, convergence = "manual",
+    missingdata.o = FALSE, imp)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
