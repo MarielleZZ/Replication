@@ -8,7 +8,7 @@ ppc.step2step3(y.s, y.r, model = model, R, r = NULL, E = 0,
         effectsize = FALSE, s.i,
         ordered = NULL, sample.cov = NULL, sample.mean = NULL, sample.nobs = NULL,
         group = NULL, cluster = NULL, constraints = "", WLS.V = NULL, NACOV = NULL,
-        bayes = FALSE, dp = NULL, nchains = 2, obs = TRUE)
+        bayes = FALSE, dp = NULL, convergence = "manual", nchains = 2, obs = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -36,8 +36,9 @@ A user provided weight matrix to be used by estimator "WLS"; if the estimator is
   \item{NACOV}{
 A user provided matrix containing the elements of (N times) the asymptotic variance-covariance matrix of the sample statistics. For a multiple group analysis, a list with an asymptotic variance-covariance matrix for each group. See the WLS.V argument for information about the order of the elements.}
   \item{bayes}{Logic; if TRUE, a Bayesian estimator is used. }
-  \item{dp}{blavaan default prior distributions on different types of parameters, typically the result of a call to dpriors(). See the dpriors() help file for more information.}
-  \item{nchains}{A scalar indicating the number of chains to be used in the Bayesian analysis. Default value = 2.}
+  \item{dp}{If bayes = TRUE, blavaan default prior distributions on different types of parameters, typically the result of a call to dpriors(). See the dpriors() help file for more information.}
+    \item{convergence}{If bayes = TRUE, default convergence setting = "manual". If "auto", parameters will be sampled until convergence is achieved (via autorun.jags). In this case, the arguments burnin and sample are passed to autorun.jags as startburnin and startsample, respectively. Otherwise, parameters are sampled as specified by the user (or by the run.jags defaults).}
+  \item{nchains}{If bayes = TRUE, A scalar indicating the number of chains to be used in the Bayesian analysis. Default value = 2.}
   \item{obs}{logic; if FALSE, there is no y.r. obs = FALSE when computing power.}
   }
 \value{
