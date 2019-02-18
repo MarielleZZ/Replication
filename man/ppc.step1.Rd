@@ -66,7 +66,7 @@ y ~ x     #regression
 y ~1      #intercept not default in lavaan (but is in blavaan)
 '
 
-reg.step1 <- ppc.step1(y.o=data, model=model)
+reg.step1 <- ppc.step1(y.o=data, model=model,n.r=50)
 }
 }
 
