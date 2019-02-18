@@ -2,7 +2,7 @@ ppc.step2step3 <- function(y.s, y.r, model=model,
                            R, r = NULL, E = 0, effectsize = FALSE, s.i,
                            ordered = NULL, sample.cov = NULL, sample.mean = NULL, sample.nobs = NULL,
                            group = NULL, cluster = NULL, constraints = "", WLS.V = NULL, NACOV = NULL,
-                           bayes=FALSE,dp=NULL,nchains=2,obs=TRUE,convergence="manual"){
+                           bayes=FALSE,dp=NULL,convergence="manual",nchains=2,obs=TRUE){
 
   #compute likelihood ratio (i.e., D) for all y.s and for y.r
 
