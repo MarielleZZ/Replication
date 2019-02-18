@@ -6,7 +6,7 @@ ppc.step2step3 <- function(y.s, y.r, model=model,
 
   #compute likelihood ratio (i.e., D) for all y.s and for y.r
 
-  #f(D_y[sim])
+  #f(D_y[s])
   #limited number of posterior samples (saves comp. time), replace=TRUE (!)
   #sample.r <- sample(length(y.s),n.sample.r,replace=TRUE)
 
@@ -44,10 +44,10 @@ ppc.step2step3 <- function(y.s, y.r, model=model,
         llratio.s <- na.omit(unlist(llratio.s))
       }else{
 
-        llratio.s[[i]] <-tryCatch(llratio.f(BKcov=BKcov,Q=Q,R=R,r=r,E=E),
-                                  error=function(e) NA)
+      llratio.s[[i]] <-tryCatch(llratio.f(BKcov=BKcov,Q=Q,R=R,r=r,E=E),
+                              error=function(e) NA)
 
-        llratio.s <- na.omit(unlist(llratio.s))}
+      llratio.s <- na.omit(unlist(llratio.s))}
     }
   }else{
     for (i in 1:length(y.s)){
@@ -76,11 +76,11 @@ ppc.step2step3 <- function(y.s, y.r, model=model,
                                   error=function(e) NA)
       }else{
 
-        llratio.s[[i]] <-tryCatch(llratio.f(BKcov=BKcov,Q=Q,R=R,r=r,E=E),
-                                  error=function(e) NA)
+      llratio.s[[i]] <-tryCatch(llratio.f(BKcov=BKcov,Q=Q,R=R,r=r,E=E),
+                              error=function(e) NA)
       }
 
-    }
+      }
 
     llratio.s <- na.omit(unlist(llratio.s))
 
@@ -111,7 +111,7 @@ ppc.step2step3 <- function(y.s, y.r, model=model,
       r.e <- r*s
       llratio.r <- llratio.f(BKcov=BKcov.r,Q=Q.r,R=R,r=r.e,E=E)
     }else{
-      llratio.r <- llratio.f(BKcov=BKcov.r,Q=Q.r,R=R,r=r,E=E)}
+    llratio.r <- llratio.f(BKcov=BKcov.r,Q=Q.r,R=R,r=r,E=E)}
 
     #plot results
     llratio.s <<- llratio.s
