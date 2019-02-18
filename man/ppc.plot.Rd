@@ -46,11 +46,11 @@ pT <- step1.reg$pT
 reg.coef.ind <- which(pT$lhs=="y"&pT$op=="~"&pT$rhs=="x") #identify regression coefficient
 free.i <- which(pT$free!=0)
 
-Amat <- t(rep(0,times=length(free.i)))
-Amat[pT$free[which(pT$id==reg.coef.ind)]] <- 1
-bvec=c(pT$est[reg.coef.ind])        #regression coefficient => estimate
+R <- t(rep(0,times=length(free.i)))
+R[pT$free[which(pT$id==reg.coef.ind)]] <- 1
+r=c(pT$est[reg.coef.ind])        #regression coefficient => estimate
 
-step23.reg <- ppc.step2step3(y.s=step1.reg$y.s,y.r=y.r,model=model,Amat=Amat,bvec=bvec)
+step23.reg <- ppc.step2step3(y.s=step1.reg$y.s,y.r=y.r,model=model,R=R,r=r)
 
 ppc.plot(step23.reg$llratio.s,step23.reg$llratio.r)
 

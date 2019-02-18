@@ -55,7 +55,7 @@ y ~ x     #regression
 y ~1      #intercept not default in lavaan (but is in blavaan)
 '
 
-reg.post <- posterior.step1(y.o=data, model=model)
+reg.post <- posterior.step1(y.o=data, model=model,nburnin=1000,nsample=5000)
 reg.post$pT
 }
 }
