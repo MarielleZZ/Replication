@@ -151,8 +151,10 @@ create_matrices <- function(varnames, hyp){
     }
 
     if(E==0){
-      R <- matrix(IRr[,-ncol(IRr)],byrow=TRUE,ncol=length(varnames))}else{  #mz
-        R <- rbind(ERr[,-ncol(ERr)],IRr[,-ncol(IRr)])}                      #mz
+      R <- IRr[,-ncol(IRr)]}else{  #mz
+        R <- rbind(ERr[,-ncol(ERr)],IRr[,-ncol(IRr)])}
+    if(is.vector(R)==TRUE){matrix(R,nrow=1)}
+    #mz
     r <- c(ERr[,ncol(ERr)],IRr[,ncol(IRr)])                     #mz
     list(R = R, r = r, E=E)                                     #mz
 
