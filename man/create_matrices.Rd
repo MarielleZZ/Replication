@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_matrices.R
 \name{create_matrices}
 \alias{create_matrices}
-\title{Create Bain (in)equality constraint matrices}
+\title{Create (in)equality constraint matrices}
 \usage{
 create_matrices(varnames, hyp)
 }
@@ -11,22 +11,21 @@ create_matrices(varnames, hyp)
 variables used in the hypotheses.  %Object of class \code{\link{lm}}, from
 which the model parameters are extracted.}
 
-\item{hyp}{A character string, containing a Bain hypothesis (see Details).}
+\item{hyp}{A character string, containing a Replication hypothesis (see Details).}
 }
 \value{
 A pair of named matrices for every hypothesis specified in the
-\code{hyp} argument; one matrix named ERr, specifying equality constraints,
-and one matrix named IRr, specifying inequality constraints.
+\code{hyp} argument; one matrix named R, specifying (in)equality constraints,
+and, a vector called r with constants, and a value E specifying the number of equality constraints.
 }
 \description{
-Parses a character string describing a set of BAIN informative hypotheses,
-and returns BAIN (in)equality constraint matrices
+Parses a character string describing a set of informative hypotheses,
+and returns Replication (in)equality constraint matrices
 }
 \details{
 Informative hypotheses specified as a character string by "hyp" should
-adhere to the following simple syntax: \itemize{ \item Competing hypotheses
-are separated by ";".  Thus, "a=b;a>b" means that H1: a=b, and H2: a>b.
-\item Each individual hypothesis consists of a (series of) (in)equality
+adhere to the following simple syntax: \itemize{
+\item The hypothesis consists of a (series of) (in)equality
 constraint(s). Every single (in)equality constraint is of the form "R1*mu1 +
 R2*mu2+... = r", where capital Rs refer to numeric scaling constants, must
 refer to the names of parameters in the model, and the lower case r refers
@@ -41,7 +40,7 @@ separated list. Thus, "(a,b)>c" means that H1: a > c AND b > c.  Similarly,
 "(a,b)>(c,d)" means that H1: a > c AND b > c AND b > c AND b > d.  }
 }
 \author{
-Caspar van Lissa
+Caspar van Lissa, modified for the Replication package by M.A.J. Zondervan-Zwijnenburg
 }
 \keyword{internal}
 \keyword{utilities}

@@ -38,8 +38,8 @@ llratio.imp <- function(step2step3,imp,model,effectsize=FALSE, s.i,
 
       if(effectsize==TRUE){
         s <- vector()
-        for (j in 1:length(r)){s[j] <- pT.r$est[s.i[j]]}
-        r <- r*s
+        for (j in 1:length(r)){s[j] <- pT$est[ pT$id == s.i[j] ]}
+        r.e <- r*s
       }
 
       llratio.i[i] <-tryCatch(llratio.f(BKcov=BKcov.r,Q=Q.r,R=R,r=r,E=E),
@@ -70,12 +70,17 @@ llratio.imp <- function(step2step3,imp,model,effectsize=FALSE, s.i,
 
       if(effectsize==TRUE){
         s <- vector()
-        for (j in 1:length(r)){s[j] <- pT$est[s.i[j]]}
-        r <- r*s
-      }
+        for (j in 1:length(r)){s[j] <- pT$est[ pT$id == s.i[j] ]}
+        r.e <- r*s
 
-      llratio.i[i] <- tryCatch(llratio.f(BKcov=BKcov.r,Q=Q.r,R=R,r=r,E=E),
-                               error=function(e) NA)
+        llratio.i[i] <-tryCatch(llratio.f(BKcov=BKcov.r,Q=Q.r,R=R,r=r.e,E=E),
+                                  error=function(e) NA)
+
+      }else{
+
+        llratio.i[i] <-tryCatch(llratio.f(BKcov=BKcov.r,Q=Q.r,R=R,r=r,E=E),
+                                  error=function(e) NA)}
+
     }}
 
   pT.m.est <- rowMeans(sapply(pT,'[[',"est"), na.rm=TRUE)

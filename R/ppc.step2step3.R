@@ -12,9 +12,10 @@ ppc.step2step3 <- function(step1, y.r, model=model, ...,
 
   y.s <- step1$y.s
   pT <- step1$pT
+  pT <- pT[which(pT$free!=0),]
+  pT <- pT[!(duplicated(pT$label))|pT$label=="",]
 
-  free.i <- which(pT$free!=0)             #indices estimated parameters in covariance matrix
-  vars <- pT$plabel[free.i]               #var names for estimated parameters
+  vars <- pT$plabel             #var names for estimated parameters
   mat <- create_matrices(varnames=c(vars),hyp=list(...))   #reg > est = .p1.>0.350
   R <- mat$R
   r <- mat$r
@@ -45,7 +46,7 @@ ppc.step2step3 <- function(step1, y.r, model=model, ...,
 
       if(effectsize==TRUE){
         s <- vector()
-        for (j in 1:length(r)){s[j] <- pT$est[s.i[j]]}
+        for (j in 1:length(r)){s[j] <- pT$est[ pT$id == s.i[j] ]}
         r.e <- r*s
 
         llratio.s[[i]] <-tryCatch(llratio.f(BKcov=BKcov,Q=Q,R=R,r=r.e,E=E),
@@ -79,7 +80,7 @@ ppc.step2step3 <- function(step1, y.r, model=model, ...,
 
       if(effectsize==TRUE){
         s <- vector()
-        for (j in 1:length(r)){s[j] <- pT$est[s.i[j]]}
+        for (j in 1:length(r)){s[j] <- pT$est[ pT$id == s.i[j] ]}
         r.e <- r*s
 
         llratio.s[[i]] <-tryCatch(llratio.f(BKcov=BKcov,Q=Q,R=R,r=r.e,E=E),
@@ -117,7 +118,7 @@ ppc.step2step3 <- function(step1, y.r, model=model, ...,
 
     if(effectsize==TRUE){
       s <- vector()
-      for (j in 1:length(r)){s[j] <- pT.r$est[s.i[j]]}
+      for (j in 1:length(r)){s[j] <- pT$est[ pT$id == s.i[j] ]}
       r.e <- r*s
       llratio.r <- llratio.f(BKcov=BKcov.r,Q=Q.r,R=R,r=r.e,E=E)
     }else{

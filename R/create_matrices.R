@@ -358,3 +358,75 @@ params_in_hyp <- function(hyp){
   params_in_hyp <- params_in_hyp[!sapply(params_in_hyp, grepl, pattern = "^[0-9]*\\.?[0-9]+$")]
   params_in_hyp[grepl("^[a-zA-Z]", params_in_hyp)]
 }
+
+#' @importFrom utils tail
+rename_function <- function(text){
+  fulltext <- paste(text, collapse = "")
+  new_names <- names_est <- text
+  #if(grepl("[\\(\\)]", fulltext)){
+  #  text <- gsub("\\(", "___O___", text)
+  #  text <- gsub("\\)", "___C___", text)
+  #}
+  text[text == "(Intercept)"] <- "Intercept"
+  if(grepl(":", fulltext)){
+    text <- gsub(":", "___X___", text)
+  }
+
+  if(grepl("mean of ", fulltext)){
+    text <- gsub("mean of the differences", "difference", text)
+    text <- gsub("mean of ", "", text)
+  }
+
+  # If any variables are subsetted from data.frames: remode the df part of the name
+  remove_df <- sapply(text, grepl, pattern = "[\\]\\$]+", perl = TRUE)
+  if(any(remove_df)){
+    text[remove_df] <- sapply(text[remove_df], function(x){
+      tmp_split <- strsplit(x, "[\\]\\$]+", perl = TRUE)[[1]]
+      if(length(tmp_split)==1){
+        x
+      } else {
+        tail(tmp_split, 1)
+      }
+    })
+  }
+
+  text
+}
+
+#' @importFrom utils tail
+rename_estimate <- function(estimate){
+
+  new_names <- names_est <- names(estimate)
+  if(any(new_names == "(Intercept)")) new_names[match(new_names, "(Intercept)")] <- "Intercept"
+  if(is.null(names_est)){
+    stop("The 'estimates' supplied to bain() were unnamed. This is not allowed, because estimates are referred to by name in the 'hypothesis' argument. Please name your estimates.")
+  }
+
+  if(length(new_names) < 3){
+    new_names <- gsub("mean of the differences", "difference", new_names)
+    new_names <- gsub("mean of ", "", new_names)
+  }
+
+  # If any variables are subsetted from data.frames: remode the df part of the name
+  remove_df <- sapply(new_names, grepl, pattern = "[\\]\\$]+", perl = TRUE)
+  if(any(remove_df)){
+    new_names[remove_df] <- sapply(new_names[remove_df], function(x){
+      tmp_split <- strsplit(x, "[\\]\\$]+", perl = TRUE)[[1]]
+      if(length(tmp_split)==1){
+        x
+      } else {
+        tail(tmp_split, 1)
+      }
+    })
+  }
+
+  # Any interaction terms: replace : with _X_
+  new_names <- gsub(":", "___X___", new_names)
+
+  legal_varnames <- sapply(new_names, grepl, pattern = "^[a-zA-Z\\.][a-zA-Z0-9\\._]{0,}$")
+  if(!all(legal_varnames)){
+    stop("Could not parse the names of the 'estimates' supplied to bain(). Estimate names must start with a letter or period (.), and can be a combination of letters, digits, period and underscore (_).\nThe estimates violating these rules were originally named: ", paste("'", names_est[!legal_varnames], "'", sep = "", collapse = ", "), ".\nAfter parsing by bain, these parameters are named: ", paste("'", new_names[!legal_varnames], "'", sep = "", collapse = ", "), call. = FALSE)
+  }
+  names(estimate) <- new_names
+  estimate
+}

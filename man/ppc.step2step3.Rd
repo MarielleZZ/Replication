@@ -4,7 +4,7 @@
 \description{
 Calculates a likelihood ratio (D) for new data (y.r) and predicted data (y.s) according to the proposed constraints, and generates a prior predictive p-value.}
 \usage{
-ppc.step2step3(y.s, y.r, model = model, ...,
+ppc.step2step3(step1, y.r, model = model, ...,
         effectsize = FALSE, s.i,
         ordered = NULL, sample.cov = NULL, sample.mean = NULL, sample.nobs = NULL,
         group = NULL, cluster = NULL, constraints = "", WLS.V = NULL, NACOV = NULL,
