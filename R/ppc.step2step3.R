@@ -1,5 +1,5 @@
-ppc.step2step3 <- function(y.s, y.r, model=model,
-                           R, r = NULL, E = 0, effectsize = FALSE, s.i,
+ppc.step2step3 <- function(step1, y.r, model=model, ...,
+                           effectsize = FALSE, s.i,
                            ordered = NULL, sample.cov = NULL, sample.mean = NULL, sample.nobs = NULL,
                            group = NULL, cluster = NULL, constraints = "", WLS.V = NULL, NACOV = NULL,
                            bayes=FALSE,dp=NULL,convergence="manual",nchains=2,obs=TRUE){
@@ -9,6 +9,16 @@ ppc.step2step3 <- function(y.s, y.r, model=model,
   #f(D_y[s])
   #limited number of posterior samples (saves comp. time), replace=TRUE (!)
   #sample.r <- sample(length(y.s),n.sample.r,replace=TRUE)
+
+  y.s <- step1$y.s
+  pT <- step1$pT
+
+  free.i <- which(pT$free!=0)             #indices estimated parameters in covariance matrix
+  vars <- pT$plabel[free.i]               #var names for estimated parameters
+  mat <- create_matrices(varnames=c(vars),hyp=list(...))   #reg > est = .p1.>0.350
+  R <- mat$R
+  r <- mat$r
+  E <- mat$E
 
   llratio.s <- list()
   print("Calculating likelihood ratio for each y.s",quote=FALSE)
@@ -119,9 +129,9 @@ ppc.step2step3 <- function(y.s, y.r, model=model,
 
     #prior predictive p
     p <- sum((llratio.s)>=llratio.r)/length(llratio.s) #prior predictive p-value
-    results <- list("llratio.r"=llratio.r,"p-value"=p,"llratio.s"=llratio.s)
+    results <- list("llratio.r"=llratio.r,"p-value"=p,"llratio.s"=llratio.s,"H0 matrices"=mat)
   }else{
-    results <- list("llratio.s"=llratio.s)
+    results <- list("llratio.s"=llratio.s,"H0 matrices"=mat)
   }
   cat("\n")
   return(results)

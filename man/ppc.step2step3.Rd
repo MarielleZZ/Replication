@@ -4,7 +4,7 @@
 \description{
 Calculates a likelihood ratio (D) for new data (y.r) and predicted data (y.s) according to the proposed constraints, and generates a prior predictive p-value.}
 \usage{
-ppc.step2step3(y.s, y.r, model = model, R, r = NULL, E = 0,
+ppc.step2step3(y.s, y.r, model = model, ...,
         effectsize = FALSE, s.i,
         ordered = NULL, sample.cov = NULL, sample.mean = NULL, sample.nobs = NULL,
         group = NULL, cluster = NULL, constraints = "", WLS.V = NULL, NACOV = NULL,
@@ -12,14 +12,12 @@ ppc.step2step3(y.s, y.r, model = model, R, r = NULL, E = 0,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{y.s}{A list containing all y.s.}
+  \item{step1}{An object containing the output of ppc.step1.}
   \item{y.r}{A data.frame with the new data.}
   \item{model}{The (b)lavaan model that is to be fitted to the data.}
-  \item{R}{A p by q matrix, where p is the number of free parameters in the model, and q is the number of constraints to be imposed on the model. Each row represents one constraint.}
-  \item{r}{A vector of length p holding the minimimum sum for each row in R.}
-  \item{E}{Numeric; the first E constraints are treated as equality constraints, all further as inequality constraints. Default value = 0.}
+  \item{...}{H0, the replication hypothesis  within quotes "" with the lavaan plabels as parameter names and parts separated with &.}
   \item{effectsize}{Logic; if TRUE, the constraints concern effectsizes.}
-  \item{s.i}{A vector of length p holding with indices for the (pooled) standard deviation parameters with which the effect sizes should be computed}
+  \item{s.i}{A vector of length p with indices for the (pooled) standard deviation parameters with which the effect sizes should be computed}
   \item{ordered}{Character vector. Only used if the data is in a data.frame. Treat these variables as ordered (ordinal) variables, if they are endogenous in the model. Importantly, all other variables will be treated as numeric (unless they are declared as ordered in the original data.frame}
   \item{sample.cov}{Numeric matrix. A sample variance-covariance matrix. The rownames and/or colnames must contain the observed variable names. For a multiple group analysis, a list with a variance-covariance matrix for each group. Note that if maximum likelihood estimation is used and likelihood="normal", the user provided covariance matrix is internally rescaled by multiplying it with a factor (N-1)/N, to ensure that the covariance matrix has been divided by N. This can be turned off by setting the sample.cov.rescale argument to FALSE.
 }
@@ -57,6 +55,7 @@ rnorm2 <- function(n,mean,sd) { mean+sd*scale(rnorm(n)) }
 
 # simple regression -------------------------------------------------------
 
+set.seed(9)
 #step 1 input
 #create/load data
 n.o=30 #sample size original data
@@ -74,15 +73,11 @@ y ~1      #intercept not default in lavaan (but is in blavaan)
 #Warning: This is a minimal example;
 step1.reg <- ppc.step1(y.o=y.o,model=model,nchains=2,n.r=50)
 
-pT <- step1.reg$pT
-reg.coef.ind <- which(pT$lhs=="y"&pT$op=="~"&pT$rhs=="x") #identify regression coefficient
-free.i <- which(pT$free!=0)
+print(step1.reg$pT)
+#plabel of regression coefficient = .p1., est = 0.348, lab intercept = .p2., est = -1.007
+#H0: #reg > est, int = est       =       .p1.>0.348 & .p2.< -1
 
-R <- t(rep(0,times=length(free.i)))
-R[pT$free[which(pT$id==reg.coef.ind)]] <- 1
-r=c(pT$est[reg.coef.ind])        #regression coefficient => estimate
-
-step23.reg <- ppc.step2step3(y.s=step1.reg$y.s,y.r=y.r,model=model,R=R,r=r)
+step23.reg <- ppc.step2step3(step1=step1.reg,y.r=y.r,model=model,".p1.>0.348 & .p2.>-1")
 }
 }
 \keyword{htest }% use one of  RShowDoc("KEYWORDS")

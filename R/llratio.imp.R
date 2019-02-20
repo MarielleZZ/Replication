@@ -1,7 +1,13 @@
-llratio.imp <- function(step2step3,imp,model,R,r=NULL,E=0,effectsize=FALSE, s.i,
+llratio.imp <- function(step2step3,imp,model,effectsize=FALSE, s.i,
                         sample.cov = NULL, sample.mean = NULL, sample.nobs = NULL,
                         group = NULL, cluster = NULL, constraints = "", WLS.V = NULL, NACOV = NULL,
                         bayes=FALSE,dp=NULL,nchains=2){
+
+
+  mat <- step2step3$mat
+  R <- mat$R
+  r <- mat$r
+  E <- mat$E
 
   llratio.i <- matrix(NA)
   pT <- list()
