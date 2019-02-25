@@ -4,7 +4,7 @@ llratio.imp <- function(step2step3,imp,model,effectsize=FALSE, s.i,
                         bayes=FALSE,dp=NULL,nchains=2){
 
 
-  mat <- step2step3$mat
+  mat <- step2step3$`H0 matrices`
   R <- mat$R
   r <- mat$r
   E <- mat$E
