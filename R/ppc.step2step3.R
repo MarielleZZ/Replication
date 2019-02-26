@@ -56,10 +56,10 @@ ppc.step2step3 <- function(step1, y.r, model=model, ...,
         llratio.s <- na.omit(unlist(llratio.s))
       }else{
 
-      llratio.s[[i]] <-tryCatch(llratio.f(BKcov=BKcov,Q=Q,R=R,r=r,E=E),
-                              error=function(e) NA)
+        llratio.s[[i]] <-tryCatch(llratio.f(BKcov=BKcov,Q=Q,R=R,r=r,E=E),
+                                  error=function(e) NA)
 
-      llratio.s <- na.omit(unlist(llratio.s))}
+        llratio.s <- na.omit(unlist(llratio.s))}
     }
   }else{
     for (i in 1:length(y.s)){
@@ -67,40 +67,41 @@ ppc.step2step3 <- function(step1, y.r, model=model, ...,
       fit_l <- sem(model, data=y.s[[i]],
                    ordered = ordered, sample.cov = sample.cov, sample.mean = sample.mean, sample.nobs = sample.nobs,
                    group = group, cluster = cluster, constraints = "", WLS.V = WLS.V, NACOV = NACOV)
-      pT <- parameterTable(fit_l)
-      free.i <- which(pT$free!=0)
+      pT.s <- parameterTable(fit_l)
+      free.i <- which(pT.s$free!=0)
       BKcov <- lavInspect(fit_l,"vcov")
 
       if (sum(duplicated(rownames(BKcov)))>0){
-        pT <- pT[free.i,][-which(duplicated(rownames(BKcov))),]
+        pT <- pT.s[free.i,][-which(duplicated(rownames(BKcov))),]
         Q <- pT$est
         BKcov <- BKcov[!duplicated(rownames(BKcov)), !duplicated(colnames(BKcov))]
       }else{
-        Q <- pT$est[free.i]
+        Q <- pT.s$est[free.i]
       }
 
       if(is.null(s.i)==FALSE){
         s <- vector()
-        for (j in 1:length(r)){s[j] <- pT$est[ pT$id == s.i[j] ]}
+        for (j in 1:length(r)){s[j] <- pT.s$est[ pT.s$id == s.i[j] ]}
         r.e <- r*s
 
         llratio.s[[i]] <-tryCatch(llratio.f(BKcov=BKcov,Q=Q,R=R,r=r.e,E=E),
                                   error=function(e) NA)
       }else{
 
-      llratio.s[[i]] <-tryCatch(llratio.f(BKcov=BKcov,Q=Q,R=R,r=r,E=E),
-                              error=function(e) NA)
+        llratio.s[[i]] <-tryCatch(llratio.f(BKcov=BKcov,Q=Q,R=R,r=r,E=E),
+                                  error=function(e) NA)
       }
 
-      }
+    }
 
     llratio.s <- na.omit(unlist(llratio.s))
 
     if(length(attr(llratio.s,"na.action"))!=0){
       print(paste(length(attr(llratio.s,"na.action")),"datasets could not be analyzed properly, this may relate to non-positive definite variance-covariance matrices."))}
 
-    pT <- pT[free.i,][-which(duplicated(rownames(BKcov))),]
-    if(identical(pT[,1:4],pT1[,1:4])==FALSE){
+    pT.s <- pT.s[free.i,]
+    pT.s <- pT.s[!(duplicated(pT.s$label))|pT.s$label=="",]
+    if(identical(pT.s[,1:4],pT1[,1:4])==FALSE){
       print("Warning: the Bayesian parameter table of step1 is not equal to that of step2step3. Check pT.1 and pT.s in the results to see if this affects parameter labels for parameters in H0. If so, specify all model parameters in the model syntax.")
     }
   }
@@ -128,7 +129,7 @@ ppc.step2step3 <- function(step1, y.r, model=model, ...,
       r.e <- r*s
       llratio.r <- llratio.f(BKcov=BKcov.r,Q=Q.r,R=R,r=r.e,E=E)
     }else{
-    llratio.r <- llratio.f(BKcov=BKcov.r,Q=Q.r,R=R,r=r,E=E)}
+      llratio.r <- llratio.f(BKcov=BKcov.r,Q=Q.r,R=R,r=r,E=E)}
 
     #plot results
     llratio.s <<- llratio.s
