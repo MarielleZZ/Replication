@@ -64,9 +64,6 @@ posterior.step1 <- function(y.o, model,
     for(i in 1:length(free.i)){post[[i]] <<- unlist(post.y.o[,i])}
   }
 
-  pT <- pT[which(pT$free!=0),]
-  pT <- pT[!(duplicated(pT$label))|pT$label=="",]
-
   #results
   results <- list(post=post, pT=pT,free.i=free.i, traceplot)
   return(results)
