@@ -13,10 +13,6 @@ ppc.step1 <- function(y.o, model,
 
   ss1 <- sim.step1(n.r=n.r,nsim=nsim,post=ps1$post,pT=ps1$pT,free.i=ps1$free.i,group=group,n.groups=n.groups)
 
-
-  pT <- ps1$pT[which(pT$free!=0),]
-  pT <- pT[!(duplicated(pT$label))|pT$label=="",]
-
   results <- list(traceplot=ps1$traceplot,pT=ps1$pT,y.s=ss1$y.s)
 
   return(results)

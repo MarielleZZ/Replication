@@ -11,9 +11,12 @@ ppc.step2step3 <- function(step1, y.r, model=model, ...,
   #sample.r <- sample(length(y.s),n.sample.r,replace=TRUE)
 
   y.s <- step1$y.s
-  pT <- step1$pT
+  pT1 <- step1$pT
 
-  vars <- pT$plabel             #var names for estimated parameters
+  pT1 <- pT1[which(pT1$free!=0),]
+  pT1 <- pT1[!(duplicated(pT1$label))|pT1$label=="",]
+
+  vars <- pT1$plabel             #var names for estimated parameters
   mat <- create_matrices(varnames=c(vars),hyp=list(...))   #reg > est = .p1.>0.350
   R <- mat$R
   r <- mat$r
@@ -96,8 +99,9 @@ ppc.step2step3 <- function(step1, y.r, model=model, ...,
     if(length(attr(llratio.s,"na.action"))!=0){
       print(paste(length(attr(llratio.s,"na.action")),"datasets could not be analyzed properly, this may relate to non-positive definite variance-covariance matrices."))}
 
-    if(identical(pT[,1:4],step1$pT[,1:4])==FALSE){
-      print("Warning: the Bayesian parameter table of step1 is not equal to that of step2step3. Check in the results of step1 and step2step3 if this affects parameter labels for parameters in H0. If so, specify all model parameters in the model syntax.")
+    pT <- pT[free.i,]
+    if(identical(pT[,1:4],pT1[,1:4])==FALSE){
+      print("Warning: the Bayesian parameter table of step1 is not equal to that of step2step3. Check pT.1 and pT.s in the results to see if this affects parameter labels for parameters in H0. If so, specify all model parameters in the model syntax.")
     }
   }
 
@@ -132,9 +136,11 @@ ppc.step2step3 <- function(step1, y.r, model=model, ...,
 
     #prior predictive p
     p <- sum((llratio.s)>=llratio.r)/length(llratio.s) #prior predictive p-value
-    results <- list("llratio.r"=llratio.r,"p-value"=p,"llratio.s"=llratio.s,"H0 matrices"=mat,"pT.s"=pT[,c(1:4,12)])
+    results <- list("llratio.r"=llratio.r,"p-value"=p,"llratio.s"=llratio.s,"H0 matrices"=mat,
+                    "pT.s"=pT[,c(1:4,12)],"pT.1"=pT1[,c(1:4,12)])
   }else{
-    results <- list("llratio.s"=llratio.s,"H0 matrices"=mat,"pT.s"=pT)
+    results <- list("llratio.s"=llratio.s,"H0 matrices"=mat,
+                    "pT.s"=pT[,c(1:4,12)],"pT.1"=pT1[,c(1:4,12)])
   }
   cat("\n")
   return(results)
