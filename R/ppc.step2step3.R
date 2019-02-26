@@ -34,15 +34,13 @@ ppc.step2step3 <- function(step1, y.r, model=model, ...,
                     sample.cov = sample.cov, sample.mean = sample.mean, sample.nobs = sample.nobs,
                     group = group, constraints = "", WLS.V = WLS.V, NACOV = NACOV, convergence=convergence)
       pT <- parameterTable(fit_l)
-      free.i <- which(pT$free!=0)
+      pT <- pT[which(pT$free!=0),]
+      pT <- pT[!(duplicated(pT$label))|pT$label=="",]
+      Q <- pT$est
       BKcov <- lavInspect(fit_l,"vcov")
 
       if (sum(duplicated(rownames(BKcov)))>0){
-        pT <- pT[free.i,][-which(duplicated(rownames(BKcov))),]
-        Q <- pT$est
         BKcov <- BKcov[!duplicated(rownames(BKcov)), !duplicated(colnames(BKcov))]
-      }else{
-        Q <- pT$est[free.i]
       }
 
       if(is.null(s.i)==FALSE){
@@ -69,14 +67,15 @@ ppc.step2step3 <- function(step1, y.r, model=model, ...,
                    group = group, cluster = cluster, constraints = "", WLS.V = WLS.V, NACOV = NACOV)
       pT <- parameterTable(fit_l)
       free.i <- which(pT$free!=0)
+      pT <- pT[free.i,]
       BKcov <- lavInspect(fit_l,"vcov")
 
       if (sum(duplicated(rownames(BKcov)))>0){
-        pT <- pT[free.i,][-which(duplicated(rownames(BKcov))),]
+        pT <- pT[-which(duplicated(rownames(BKcov))),]
         Q <- pT$est
         BKcov <- BKcov[!duplicated(rownames(BKcov)), !duplicated(colnames(BKcov))]
       }else{
-        Q <- pT$est[free.i]
+        Q <- pT$est
       }
 
       if(is.null(s.i)==FALSE){
@@ -99,7 +98,6 @@ ppc.step2step3 <- function(step1, y.r, model=model, ...,
     if(length(attr(llratio.s,"na.action"))!=0){
       print(paste(length(attr(llratio.s,"na.action")),"datasets could not be analyzed properly, this may relate to non-positive definite variance-covariance matrices."))}
 
-    pT <- pT[free.i,]
     if(identical(pT[,1:4],pT1[,1:4])==FALSE){
       print("Warning: the Bayesian parameter table of step1 is not equal to that of step2step3. Check pT.1 and pT.s in the results to see if this affects parameter labels for parameters in H0. If so, specify all model parameters in the model syntax.")
     }
