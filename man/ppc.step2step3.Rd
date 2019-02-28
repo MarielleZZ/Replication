@@ -15,7 +15,7 @@ ppc.step2step3(step1, y.r, model = model, ...,
   \item{step1}{An object containing the output of ppc.step1.}
   \item{y.r}{A data.frame with the new data. If y.r = NA, the approximate likelihood ratio will only be computed for the predicted data y.s.}
   \item{model}{The (b)lavaan model that is to be fitted to the data.}
-  \item{...}{H0, the replication hypothesis  within quotes "" with the lavaan plabels as parameter names and parts separated with &.}
+  \item{H0}{The replication hypothesis within quotes "" with the lavaan plabels as parameter names and parts separated with &.}
   \item{s.i}{A vector of length p with indices for the (pooled) standard deviation parameters with which the effect sizes should be computed. Default = NULL.}
   \item{ordered}{Character vector. Only used if the data is in a data.frame. Treat these variables as ordered (ordinal) variables, if they are endogenous in the model. Importantly, all other variables will be treated as numeric (unless they are declared as ordered in the original data.frame}
   \item{sample.cov}{Numeric matrix. A sample variance-covariance matrix. The rownames and/or colnames must contain the observed variable names. For a multiple group analysis, a list with a variance-covariance matrix for each group. Note that if maximum likelihood estimation is used and likelihood="normal", the user provided covariance matrix is internally rescaled by multiplying it with a factor (N-1)/N, to ensure that the covariance matrix has been divided by N. This can be turned off by setting the sample.cov.rescale argument to FALSE.

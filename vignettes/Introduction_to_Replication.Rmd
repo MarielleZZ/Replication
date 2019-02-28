@@ -1,0 +1,180 @@
+---
+title: "Introduction to the Replication R package"
+author: "M.A.J. Zondervan-Zwijnenburg"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to the Replication R package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+ 
+## Introduction
+
+The Replication package uses the prior predictive p-value to test whether a 
+an attempted replication (i.e., a new study) fails to replicate the conclusions
+of an original study. 
+
+The Replication package is demonstrated in:
+Zondervan-Zwijnenburg, M.A.J. (2019). How to Test Replication for Structural Equation Models. 
+
+**Users are
+advised to read the paper and this vignette before using the `Replication` package**.
+
+
+## The specification of `H0` in `ppc.step2step3` 
+
+`H0` is a character string that specifies which informative
+hypothesis has to be evaluated. A simple example is `H0 <- ".p1. >
+.p2. > .p3. & .p1. = 2"` which specifies a hypothesis using three estimates with
+names ".p1.", ".p2.", and ".p3.", respectively.
+
+The hypothesis specified has to adhere to the following rules **`ppc.step2step3` may still run if you
+deviate from the rules, however, the output will be nonsense**:
+
+* When using `ppc.step2step3`, the `plabels` of the `blavaan` output resulting from `ppc.step1` have to be used to indicate which parameters are involved in the informative hypothesis H0. For example `.p1.` and `.p2.` can be the labels of the parameters of interest.
+
+* Linear combinations of parameters must be specified adhering to the
+following rules:
+
+a) Each parameter name is used at most once.
+b) Each parameter name may or may not be pre-multiplied with a number.
+c) A constant may be added or subtracted from each parameter name.
+d) A linear combination can also be a single number.
+
+Examples are: `3 *.p1.+ 5`; `.p1.+ 2 * .p2.+ 3 * .p3.- 2`; `.p1.- b`; and `5`.
+
+* (Linear combinations of) parameters can be constrained using <, >, and
+=. For example, `.p1.> 0` or
+`.p1.> .p2.= 0` or `2 *.p1.< .p2.+ .p3.> 5`.
+* The ampersand `&` can be used to combine different parts of a hypothesis.
+For example, `.p1.> .p2.& .p2.> c` which is equivalent to `.p1.> .p2.> c` or
+`.p1.> 0 & .p2.> 0 & .p3.> 0`.
+* Sets of (linear combinations of) parameters subjected to the same
+constraints can be specified using (). For
+example, `.p1.> (b,c)` which is equivalent to `.p1.> .p2.&.p1.> .p3.`.
+* Hypotheses have to be compatible, non-redundant and possible. What
+these terms mean will be elaborated below.
+
+
+**The set of hypotheses has to be compatible.** For the statistical
+background of this requirement see Gu, Mulder, Hoijtink (2018). Usually the
+sets of hypotheses specified by researchers are compatible, and if not,
+`bain` will return an error message. The following steps can be used to
+determine if a set of hypotheses is compatible:
+
+1)	Replace a range constraint, e.g., `1 < .p1. < 3`, by an equality
+constraint in which the parameter involved is equated to the midpoint of the
+range, that is, `.p1. = 2`.
+2) Replace in each hypothesis the < and > by =. For example, `.p1. = .p2.
+> .p3. > .p4.`  becomes `.p1. = .p2. = .p3. = .p4.`.
+3) The hypotheses are compatible if there is at least one solution to the
+resulting set of equations. For the two hypotheses considered under 1. and
+2., the solution is .p1. = .p2. = .p3. = .p4. = 2. An example of two non-compatible
+hypotheses is `hypotheses <- ".p1.= 0;.p1.> 2;"` because there is no
+solution to the equations `.p1.=0` and `.p1.=2`.
+
+
+**A hypothesis has to be possible.** 
+A hypothesis is impossible if estimates in agreement with the hypothesis do not
+exist. For example: values for `a` in agreement with `.p1.= 0 &
+a > 2` do not exist. It is the responsibility of the user to ensure that the
+hypotheses specified are possible. If not, `ppc.step2step3` will return an
+error message: `Error in solve.QP(Dmat, dvec = dvec, t(R), r, meq = E, factorized = FALSE) : constraints are inconsistent, no solution!`.
+
+
+
+## Examples
+
+
+Note that, each of the examples given below can be run by copy pasting them
+into the Source screen of `RStudio`. An `Examples.R` file can also be
+downloaded from the `bain` website at
+https://informative-hypotheses.sites.uu.nl/software/bain/ 
+
+Unless indicated otherwise, the examples that follow below use a simulated
+data set inspired by the Sesame Street data set from:
+Stevens, J. P. (1996). Applied Multivariate Statistics for the Social
+Sciences. Mahwah NJ: Lawrence Erlbaum. This data set is included in the
+bain package. The variables contained in sesamesim are subsequently:
+
+
+```{r Example lgm}
+#simulate data for this example
+mu.y.o <- c(1.52,  3.38,  5.51,  7.45,  0.09, -0.04,  1.50 ) 
+cov.y.o <- rbind(
+c(   0.25, 0.28, 0.31, 0.40, 0.50, -0.04, 0.05),
+c(   0.28, 1.71, 1.32, 1.54, 1.78,  0.24, 0.41),
+c(   0.31, 1.32, 2.26, 2.38, 2.59,  0.14, 0.59),
+c(   0.40, 1.54, 2.38, 3.66, 3.65,  0.13, 0.76),
+c(   0.50, 1.78, 2.59, 3.65, 4.76,  0.16, 1.03),
+c(  -0.04, 0.24, 0.14, 0.13, 0.16,  0.94, 0.17),
+c(   0.05, 0.41, 0.59, 0.76, 1.03,  0.17, 1.11))
+
+y.o <- mvrnorm(n = 212, mu = mu.y.o, Sigma = cov.y.o, empirical = TRUE)
+colnames(y.o) <- c("g","t1","t2","t3","t4","qft","x2")
+y.o <- data.frame(y.o)
+
+mu.y.r <- c(1.52,  3.38,  5.51,  7.45,  0.09, -0.04,  1.50) 
+cov.y.r <- rbind(
+c(  2.05,  1.60,  1.73,  1.79, -0.06, 0.23, -0.24),
+c(  1.60,  2.11,  2.15,  2.52,  0.05, 0.26, -0.24),
+c(  1.73,  2.15,  3.34,  3.67, -0.14, 0.51, -0.23),
+c(  1.79,  2.52,  3.67,  5.12, -0.20, 0.68, -0.26),
+c( -0.06,  0.05, -0.14, -0.20,  0.99, 0.05, -0.02),
+c(  0.23,  0.26,  0.51,  0.68,  0.05, 0.80,  0.02),
+c( -0.24, -0.24, -0.23, -0.26, -0.02, 0.02,  0.25))
+
+y.r <- mvrnorm(n = 340, mu = mu.y.r, Sigma = cov.y.r, empirical = FALSE)
+colnames(y.r) <- c("g","t1","t2","t3","t4","qft","x2")
+y.r <- data.frame(y.r)
+
+#Specify the lavaan lgm with latent intercept and slope factor. Predictor qft and x2. 
+model.lgm <- '
+i =~ 1*t1 + 1*t2 + 1*t3 + 1*t4
+s =~ 0*t1 + 1*t2 + 2*t3 + 3*t4
+
+i ~ qft
+s ~ qft
+i ~ x2
+s ~ x2
+
+i ~ 1
+s ~ 1
+
+t1~0*1
+t2~0*1
+t3~0*1
+t4~0*1
+'
+
+#obtain the predicted data given y.o with sample size of y.r. nsim 500 is relatively small to speed up the example, use the default of 5000
+step1.lgm <- ppc.step1(y.o=y.o,model=model.lgm,nsim=500, n.r=dim(y.r)[1])
+
+#H0 intercept and slope at least of size parameters in y.o
+pT <- step1.lgm$pT
+i.id <- which(pT$lhs=="i"&pT$op=="~1"&pT$rhs=="") #identify id i
+s.id <- which(pT$lhs=="s"&pT$op=="~1"&pT$rhs=="") #identify id s
+hyp <- cbind(pT[c(i.id,s.id),"plabel"],
+             c(">",">"),
+             round(pT[c(i.id,s.id),"est"],3))
+rownames(hyp) <- c("ib","sb")
+print(hyp)
+H0 <- paste(hyp[,1],hyp[,2],hyp[,3],collapse="&")
+
+
+```
+
+
+
+
+
+
+

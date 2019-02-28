@@ -1,4 +1,4 @@
-ppc.step2step3 <- function(step1, y.r, model=model, ...,
+ppc.step2step3 <- function(step1, y.r, model=model, H0,
                            s.i=NULL,
                            ordered = NULL, sample.cov = NULL, sample.mean = NULL, sample.nobs = NULL,
                            group = NULL, cluster = NULL, constraints = "", WLS.V = NULL, NACOV = NULL,
@@ -17,7 +17,7 @@ ppc.step2step3 <- function(step1, y.r, model=model, ...,
   pT1 <- pT1[!(duplicated(pT1$label))|pT1$label=="",]
 
   vars <- pT1$plabel             #var names for estimated parameters
-  mat <- create_matrices(varnames=c(vars),hyp=list(...))   #reg > est = .p1.>0.350
+  mat <- create_matrices(varnames=c(vars),hyp=H0)
   R <- mat$R
   r <- mat$r
   E <- mat$E
