@@ -2,7 +2,6 @@ Package: Replication
 Type: Package
 Title: Test Replications by Means of the Prior Predictive p-Value
 Version: 0.1.0
-Date: 2017–09-12
 Author: M. A. J. Zondervan-Zwijnenburg
 Maintainer: M. A. J. Zondervan-Zwijnenburg <M.A.J.Zwijnenburg@uu.nl>
 Description: Allows for the computation of a prior predictive p-value to test replication of relevant features of original studies. Relevant features are captured in informative hypotheses. The package also allows for the computation of power. 
@@ -10,4 +9,3 @@ License: GPL (>= 2)
 Depends: quadprog, graphics, lavaan, blavaan, mice, MASS
 Encoding: UTF-8
 LazyData: true
-#install.packages("blavaan", repos="http://faculty.missouri.edu/~merklee", type="source")
