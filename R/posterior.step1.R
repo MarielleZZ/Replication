@@ -3,10 +3,10 @@ posterior.step1 <- function(y.o, model,
                             sample.cov = NULL, sample.mean = NULL, sample.nobs = NULL, group = NULL,
                             constraints = "", WLS.V = NULL, NACOV = NULL,
                             nchains=2, nburnin, nsample, dp=NULL,convergence="manual",
-                            missingdata.o = FALSE, imp=imp){
+                            imp=imp){
 
   #if missing data, impute and combine posterior distributions
-  if(missingdata.o == TRUE){
+  if(is.null(imp) == FALSE){
     y.o.imp <- list()
     post.list <- list()
     pT <- list()
@@ -48,7 +48,7 @@ posterior.step1 <- function(y.o, model,
 
   }
 
-  if(missingdata.o==FALSE){
+  if(is.null(imp)==TRUE){
     fit <- bsem(model, data=y.o, dp=dp,
                 sample.cov = sample.cov, sample.mean = sample.mean, sample.nobs = sample.nobs,
                 group = group, constraints = "", WLS.V = WLS.V, NACOV = NACOV,

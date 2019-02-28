@@ -1,7 +1,13 @@
-llratio.imp <- function(step2step3,imp,model,R,r=NULL,E=0,effectsize=FALSE, s.i,
+llratio.imp <- function(step2step3,imp,model,effectsize=FALSE, s.i,
                         sample.cov = NULL, sample.mean = NULL, sample.nobs = NULL,
                         group = NULL, cluster = NULL, constraints = "", WLS.V = NULL, NACOV = NULL,
                         bayes=FALSE,dp=NULL,nchains=2){
+
+
+  mat <- step2step3$`H0 matrices`
+  R <- mat$R
+  r <- mat$r
+  E <- mat$E
 
   llratio.i <- matrix(NA)
   pT <- list()
@@ -32,8 +38,8 @@ llratio.imp <- function(step2step3,imp,model,R,r=NULL,E=0,effectsize=FALSE, s.i,
 
       if(effectsize==TRUE){
         s <- vector()
-        for (j in 1:length(r)){s[j] <- pT.r$est[s.i[j]]}
-        r <- r*s
+        for (j in 1:length(r)){s[j] <- pT$est[ pT$id == s.i[j] ]}
+        r.e <- r*s
       }
 
       llratio.i[i] <-tryCatch(llratio.f(BKcov=BKcov.r,Q=Q.r,R=R,r=r,E=E),
@@ -64,12 +70,17 @@ llratio.imp <- function(step2step3,imp,model,R,r=NULL,E=0,effectsize=FALSE, s.i,
 
       if(effectsize==TRUE){
         s <- vector()
-        for (j in 1:length(r)){s[j] <- pT$est[s.i[j]]}
-        r <- r*s
-      }
+        for (j in 1:length(r)){s[j] <- pT$est[ pT$id == s.i[j] ]}
+        r.e <- r*s
 
-      llratio.i[i] <- tryCatch(llratio.f(BKcov=BKcov.r,Q=Q.r,R=R,r=r,E=E),
-                               error=function(e) NA)
+        llratio.i[i] <-tryCatch(llratio.f(BKcov=BKcov.r,Q=Q.r,R=R,r=r.e,E=E),
+                                  error=function(e) NA)
+
+      }else{
+
+        llratio.i[i] <-tryCatch(llratio.f(BKcov=BKcov.r,Q=Q.r,R=R,r=r,E=E),
+                                  error=function(e) NA)}
+
     }}
 
   pT.m.est <- rowMeans(sapply(pT,'[[',"est"), na.rm=TRUE)
