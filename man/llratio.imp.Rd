@@ -4,7 +4,7 @@
 \description{
 Computes the log likelihood ratio and p-value for data that is imputed with mice}
 \usage{
-llratio.imp(step2step3,imp,model,R,r=NULL,E=0,effectsize=FALSE,s.i,
+llratio.imp(step2step3,imp,model,effectsize=FALSE,s.i,
             sample.cov = NULL, sample.mean = NULL, sample.nobs = NULL,
             group = NULL, cluster = NULL, constraints = "", WLS.V = NULL, NACOV = NULL,
             bayes=FALSE,dp=NULL,nchains=2)
@@ -13,9 +13,6 @@ llratio.imp(step2step3,imp,model,R,r=NULL,E=0,effectsize=FALSE,s.i,
   \item{step2step3}{The likelihood ratio values for simulated data as obtained with the ppc.step2step3 function.}
   \item{imp}{A mids object created with the R-package mice}
   \item{model}{The lavaan model that is to be applied to the data}
-  \item{R}{A p by q matrix, where p is the number of free parameters in the model, and q is the number of constraints to be imposed on the model. Each row represents one constraint.}
-  \item{r}{A vector of length p holding the minimimum sum for each row in R.}
-  \item{E}{Numeric; the first E constraints are treated as equality constraints, all further as inequality constraints. Default value = 0.}
   \item{effectsize}{Logic; if TRUE, the constraints concern effectsizes.}
   \item{s.i}{A vector of length p holding with indices for the (pooled) standard deviation parameters with which the effect sizes should be computed}
   \item{sample.cov}{Numeric matrix. A sample variance-covariance matrix. The rownames and/or colnames must contain the observed variable names. For a multiple group analysis, a list with a variance-covariance matrix for each group. Note that if maximum likelihood estimation is used and likelihood="normal", the user provided covariance matrix is internally rescaled by multiplying it with a factor (N-1)/N, to ensure that the covariance matrix has been divided by N. This can be turned off by setting the sample.cov.rescale argument to FALSE.

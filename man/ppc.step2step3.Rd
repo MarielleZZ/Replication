@@ -2,24 +2,21 @@
 \alias{ppc.step2step3}
 \title{Prior predictive check step 2 and 3}
 \description{
-Calculates a likelihood ratio (D) for new data (y.r) and predicted data (y.s) according to the proposed constraints, and generates a prior predictive p-value.}
+Calculates an approximate likelihood ratio (D) for new data (y.r) and predicted data (y.s) according to the proposed constraints, and generates a prior predictive p-value.}
 \usage{
-ppc.step2step3(y.s, y.r, model = model, R, r = NULL, E = 0,
-        effectsize = FALSE, s.i,
+ppc.step2step3(step1, y.r, model = model, ...,
+        s.i,
         ordered = NULL, sample.cov = NULL, sample.mean = NULL, sample.nobs = NULL,
         group = NULL, cluster = NULL, constraints = "", WLS.V = NULL, NACOV = NULL,
-        bayes = FALSE, dp = NULL, convergence = "manual", nchains = 2, obs = TRUE)
+        bayes = FALSE, dp = NULL, convergence = "manual", nchains = 2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{y.s}{A list containing all y.s.}
-  \item{y.r}{A data.frame with the new data.}
+  \item{step1}{An object containing the output of ppc.step1.}
+  \item{y.r}{A data.frame with the new data. If y.r = NA, the approximate likelihood ratio will only be computed for the predicted data y.s.}
   \item{model}{The (b)lavaan model that is to be fitted to the data.}
-  \item{R}{A p by q matrix, where p is the number of free parameters in the model, and q is the number of constraints to be imposed on the model. Each row represents one constraint.}
-  \item{r}{A vector of length p holding the minimimum sum for each row in R.}
-  \item{E}{Numeric; the first E constraints are treated as equality constraints, all further as inequality constraints. Default value = 0.}
-  \item{effectsize}{Logic; if TRUE, the constraints concern effectsizes.}
-  \item{s.i}{A vector of length p holding with indices for the (pooled) standard deviation parameters with which the effect sizes should be computed}
+  \item{...}{H0, the replication hypothesis  within quotes "" with the lavaan plabels as parameter names and parts separated with &.}
+  \item{s.i}{A vector of length p with indices for the (pooled) standard deviation parameters with which the effect sizes should be computed. Default = NULL.}
   \item{ordered}{Character vector. Only used if the data is in a data.frame. Treat these variables as ordered (ordinal) variables, if they are endogenous in the model. Importantly, all other variables will be treated as numeric (unless they are declared as ordered in the original data.frame}
   \item{sample.cov}{Numeric matrix. A sample variance-covariance matrix. The rownames and/or colnames must contain the observed variable names. For a multiple group analysis, a list with a variance-covariance matrix for each group. Note that if maximum likelihood estimation is used and likelihood="normal", the user provided covariance matrix is internally rescaled by multiplying it with a factor (N-1)/N, to ensure that the covariance matrix has been divided by N. This can be turned off by setting the sample.cov.rescale argument to FALSE.
 }
@@ -39,13 +36,14 @@ A user provided matrix containing the elements of (N times) the asymptotic varia
   \item{dp}{If bayes = TRUE, blavaan default prior distributions on different types of parameters, typically the result of a call to dpriors(). See the dpriors() help file for more information.}
     \item{convergence}{If bayes = TRUE, default convergence setting = "manual". If "auto", parameters will be sampled until convergence is achieved (via autorun.jags). In this case, the arguments burnin and sample are passed to autorun.jags as startburnin and startsample, respectively. Otherwise, parameters are sampled as specified by the user (or by the run.jags defaults).}
   \item{nchains}{If bayes = TRUE, A scalar indicating the number of chains to be used in the Bayesian analysis. Default value = 2.}
-  \item{obs}{logic; if FALSE, there is no y.r. obs = FALSE when computing power.}
   }
 \value{
 Generates a histogram of llratio.s in which llratio.r is indicated with a vertical line. The proportion of llratio.s at the right of this line constitutes the prior predictive p-value.
 \item{llratio.r}{The likelihood ratio for the new dataset.}
 \item{p-value}{The prior predictive p-value.}
 \item{llratio.s}{The likelihood ratio's for each of the datasets y.s.}
+\item{H0 matrices}{Matrices R, r, and E that constitute the matrix form of H0: R*theta>r or R*theta=r for equality constraints. The value in E specifies the number of equality constraints in the hypothesis.}
+\item{pT.s}{Parameter table columns for y.s indicating which parameter received which id and which label in the lavaan analysis of the predicted data. If the id's and labels differ from those of the blavaan analysis used in step1, the function will generate a warning for the user to check whether this difference affects parameters in H0.}
 }
 \author{M. A. J. Zondervan-Zwijnenburg}
 \examples{
@@ -57,6 +55,7 @@ rnorm2 <- function(n,mean,sd) { mean+sd*scale(rnorm(n)) }
 
 # simple regression -------------------------------------------------------
 
+set.seed(9)
 #step 1 input
 #create/load data
 n.o=30 #sample size original data
@@ -74,15 +73,11 @@ y ~1      #intercept not default in lavaan (but is in blavaan)
 #Warning: This is a minimal example;
 step1.reg <- ppc.step1(y.o=y.o,model=model,nchains=2,n.r=50)
 
-pT <- step1.reg$pT
-reg.coef.ind <- which(pT$lhs=="y"&pT$op=="~"&pT$rhs=="x") #identify regression coefficient
-free.i <- which(pT$free!=0)
+print(step1.reg$pT)
+#plabel of regression coefficient = .p1., est = 0.348, lab intercept = .p2., est = -1.007
+#H0: #reg > est, int = est       =       .p1.>0.348 & .p2.< -1
 
-R <- t(rep(0,times=length(free.i)))
-R[pT$free[which(pT$id==reg.coef.ind)]] <- 1
-r=c(pT$est[reg.coef.ind])        #regression coefficient => estimate
-
-step23.reg <- ppc.step2step3(y.s=step1.reg$y.s,y.r=y.r,model=model,R=R,r=r)
+step23.reg <- ppc.step2step3(step1=step1.reg,y.r=y.r,model=model,".p1.>0.348 & .p2.>-1")
 }
 }
 \keyword{htest }% use one of  RShowDoc("KEYWORDS")
