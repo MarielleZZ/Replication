@@ -8,8 +8,8 @@ These samples form the basis for the predictive distribution in the prior predic
 posterior.step1(y.o, model,
     sample.cov = NULL, sample.mean = NULL, sample.nobs = NULL,
     group = NULL, constraints = "", WLS.V = NULL, NACOV = NULL,
-    nchains=2, nburnin, nsample, dp = NULL, convergence = "manual",
-    imp)
+    nchains=2, nadapt, nburnin, nsample, dp = NULL, convergence = "manual",
+    imp=imp)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -29,6 +29,7 @@ A user provided weight matrix to be used by estimator "WLS"; if the estimator is
   \item{NACOV}{
 A user provided matrix containing the elements of (N times) the asymptotic variance-covariance matrix of the sample statistics. For a multiple group analysis, a list with an asymptotic variance-covariance matrix for each group. See the WLS.V argument for information about the order of the elements.}
   \item{nchains}{A scalar indicating the number of chains to be used in the Bayesian analysis. Default value = 2.}
+  \item{nadapt}{The number of blavaan adaptive iterations to use at the start of the simulation. Default value = 1,000}
   \item{nburnin}{A scalar indicating the number of burnin iterations to be used in the Bayesian analysis.}
   \item{nsample}{A scalar indicating the number of samples to be taken from the posterior after burnin.}
   \item{convergence}{Default = "manual". If "auto", parameters will be sampled until convergence is achieved (via autorun.jags). In this case, the arguments burnin and sample are passed to autorun.jags as startburnin and startsample, respectively. Otherwise, parameters are sampled as specified by the user (or by the run.jags defaults).}
@@ -54,7 +55,7 @@ y ~ x     #regression
 y ~1      #intercept not default in lavaan (but is in blavaan)
 '
 
-reg.post <- posterior.step1(y.o=data, model=model,nburnin=1000,nsample=5000)
+reg.post <- posterior.step1(y.o=data, model=model)
 reg.post$pT
 }
 }
