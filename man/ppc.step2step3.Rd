@@ -15,7 +15,7 @@ ppc.step2step3(step1, y.r, model = model, ...,
   \item{step1}{An object containing the output of ppc.step1.}
   \item{y.r}{A data.frame with the new data. If y.r = NA, the approximate likelihood ratio will only be computed for the predicted data y.s.}
   \item{model}{The (b)lavaan model that is to be fitted to the data.}
-  \item{H0}{The replication hypothesis within quotes "" with the lavaan plabels as parameter names and parts separated with &.}
+  \item{H0}{The replication hypothesis within quotes "" with the lavaan plabels as parameter names and parts separated with &. For more information on hypothesis specification, see the details section below.}
   \item{s.i}{A vector of length p with indices for the (pooled) standard deviation parameters with which the effect sizes should be computed. Default = NULL.}
   \item{ordered}{Character vector. Only used if the data is in a data.frame. Treat these variables as ordered (ordinal) variables, if they are endogenous in the model. Importantly, all other variables will be treated as numeric (unless they are declared as ordered in the original data.frame}
   \item{sample.cov}{Numeric matrix. A sample variance-covariance matrix. The rownames and/or colnames must contain the observed variable names. For a multiple group analysis, a list with a variance-covariance matrix for each group. Note that if maximum likelihood estimation is used and likelihood="normal", the user provided covariance matrix is internally rescaled by multiplying it with a factor (N-1)/N, to ensure that the covariance matrix has been divided by N. This can be turned off by setting the sample.cov.rescale argument to FALSE.
@@ -37,6 +37,42 @@ A user provided matrix containing the elements of (N times) the asymptotic varia
     \item{convergence}{If bayes = TRUE, default convergence setting = "manual". If "auto", parameters will be sampled until convergence is achieved (via autorun.jags). In this case, the arguments burnin and sample are passed to autorun.jags as startburnin and startsample, respectively. Otherwise, parameters are sampled as specified by the user (or by the run.jags defaults).}
   \item{nchains}{If bayes = TRUE, A scalar indicating the number of chains to be used in the Bayesian analysis. Default value = 2.}
   }
+
+\details{
+The specification of `H0` in `ppc.step2step3`:
+
+`H0` is a character string that specifies which informative
+hypothesis has to be evaluated. A simple example is \code{H0 <- ".p1. >
+.p2. > .p3. & .p1. = 2"} which specifies a hypothesis using three estimates with
+names ".p1.", ".p2.", and ".p3.", respectively.
+
+The hypothesis specified has to adhere to the following rules:
+When using \code{ppc.step2step3}, the `plabels` of the \code{blavaan} output resulting from \code{ppc.step1} have to be used to indicate which parameters are involved in the informative hypothesis H0. For example `.p1.` and `.p2.` can be the labels of the parameters of interest.
+
+* Linear combinations of parameters must be specified adhering to the
+following rules:
+a) Each parameter name is used at most once.
+b) Each parameter name may or may not be pre-multiplied with a number.
+c) A constant may be added or subtracted from each parameter name.
+Examples are: \code{"3 *.p1.+ 5"}; \code{".p1.+ 2 * .p2.+ 3 * .p3.- 2"} and \code{".p1.- .p2."}.
+
+* (Linear combinations of) parameters can be constrained using \code{<}, \code{>}, and
+\code{=}. For example, \code{".p1.> 0"} or
+\code{".p1.> .p2.= 0"} or \code{"2 *.p1.< .p2.+ .p3.> 5"}.
+* The ampersand \code{&} can be used to combine different parts of a hypothesis.
+For example, \code{".p1.> .p2.& .p2.> .p3."} which is equivalent to \code{".p1.> .p2.> .p3."} or
+\code{".p1.> 0 & .p2.> 0 & .p3.> 0"}.
+
+* Sets of (linear combinations of) parameters subjected to the same
+constraints can be specified using (). For
+example, \code{".p1.> (.p2.,.p3.)"} which is equivalent to \code{".p1.> .p2.&.p1.> .p3."}.
+
+* Hypotheses have to be possible. A hypothesis is impossible if estimates in agreement with the hypothesis do not
+exist. For example: values for \code{.p1.} in agreement with \code{".p1.= 0 &
+.p1. > 2"} do not exist. It is the responsibility of the user to ensure that the
+hypotheses specified are possible. If not, \code{ppc.step2step}` will return an
+error message: \code{Error in solve.QP(Dmat, dvec = dvec, t(R), r, meq = E, factorized = FALSE) : constraints are inconsistent, no solution!}.}
+
 \value{
 Generates a histogram of llratio.s in which llratio.r is indicated with a vertical line. The proportion of llratio.s at the right of this line constitutes the prior predictive p-value.
 \item{llratio.r}{The likelihood ratio for the new dataset.}
