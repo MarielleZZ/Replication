@@ -7,7 +7,6 @@ Maintainer: M. A. J. Zondervan-Zwijnenburg <M.A.J.Zwijnenburg@uu.nl>
 Description: Allows for the computation of a prior predictive p-value to test replication of relevant features of original studies. Relevant features are captured in informative hypotheses. The package also allows for the computation of power. 
 License: GPL (>= 2)
 Depends: quadprog, graphics, lavaan, blavaan, MASS
-Suggests: mice, knitr, rmarkdown
-VignetteBuilder: knitr
+Suggests: mice
 Encoding: UTF-8
 LazyData: true
