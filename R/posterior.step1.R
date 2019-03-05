@@ -2,7 +2,7 @@
 posterior.step1 <- function(y.o, model,
                             sample.cov = NULL, sample.mean = NULL, sample.nobs = NULL, group = NULL,
                             constraints = "", WLS.V = NULL, NACOV = NULL,
-                            nchains=2, nburnin, nsample, dp=NULL,convergence="manual",
+                            nchains=2, nadapt, nburnin, nsample, dp=NULL,convergence="manual",
                             imp=imp){
 
   #if missing data, impute and combine posterior distributions
@@ -16,7 +16,7 @@ posterior.step1 <- function(y.o, model,
       fit <- bsem(model, data=y.o.imp[[i]], dp=dp,
                   sample.cov = sample.cov, sample.mean = sample.mean, sample.nobs = sample.nobs,
                   group = group, constraints = "", WLS.V = WLS.V, NACOV = NACOV,
-                  n.chains=nchains, burnin=nburnin, sample=nsample, convergence=convergence)
+                  n.chains=nchains, adapt = nadapt, burnin=nburnin, sample=nsample, convergence=convergence)
 
       pT[[i]] <- parameterTable(fit)
       free.i <- which(pT[[1]]$free!=0)
@@ -52,7 +52,7 @@ posterior.step1 <- function(y.o, model,
     fit <- bsem(model, data=y.o, dp=dp,
                 sample.cov = sample.cov, sample.mean = sample.mean, sample.nobs = sample.nobs,
                 group = group, constraints = "", WLS.V = WLS.V, NACOV = NACOV,
-                n.chains=nchains, burnin=nburnin, sample=nsample, convergence=convergence)
+                n.chains=nchains, adapt=nadapt, burnin=nburnin, sample=nsample, convergence=convergence)
     #store fixed and free output
     pT <- parameterTable(fit)
     free.i <- which(pT$free!=0)
