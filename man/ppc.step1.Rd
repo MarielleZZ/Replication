@@ -8,7 +8,8 @@ Samples from the posterior distribution of the data by means of blavaan and simu
 ppc.step1(y.o, model,
     sample.cov = NULL, sample.mean = NULL, sample.nobs = NULL,
     group = NULL, n.groups, constraints = "", WLS.V = NULL, NACOV = NULL,
-    nchains = 2, nburnin=5000, nsample=5000, dp = NULL, convergence= "manual",
+    nchains = 2, nadapt = 1000, nburnin=5000, nsample=5000,
+    dp = NULL, convergence= "manual",
     imp = NULL, n.r, nsim=5000, post, pT, free.i)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -30,6 +31,7 @@ A user provided weight matrix to be used by estimator "WLS"; if the estimator is
   \item{NACOV}{
 A user provided matrix containing the elements of (N times) the asymptotic variance-covariance matrix of the sample statistics. For a multiple group analysis, a list with an asymptotic variance-covariance matrix for each group. See the WLS.V argument for information about the order of the elements.}
   \item{nchains}{A scalar indicating the number of chains to be used in the Bayesian analysis. Default value = 2.}
+  \item{nadapt}{The number of blavaan adaptive iterations to use at the start of the simulation. Default value = 1,000}
   \item{nburnin}{A scalar indicating the number of burnin iterations to be used in the Bayesian analysis. Default value = 5,000}
   \item{nsample}{A scalar indicating the number of samples to be taken from the posterior after burnin. Default value = 5,000}
   \item{dp}{blavaan default prior distributions on different types of parameters, typically the result of a call to dpriors(). See the dpriors() help file for more information.}
@@ -53,7 +55,18 @@ A user provided matrix containing the elements of (N times) the asymptotic varia
 \code{\link{bsem}}
 }
 \examples{
-\dontrun{
+\dontshow{
+#step 1 input
+data <- data.frame(y=ChickWeight$weight,x=ChickWeight$Time)
+
+model <- '
+y ~ x     #regression
+y ~1      #intercept not default in lavaan (but is in blavaan)
+'
+
+reg.step1 <- ppc.step1(y.o=data, model=model,n.r=10,nadapt=10,nburnin=10,nsample=10,nsim=10)
+}
+\donttest{
 #the following example can be used, but takes >10 seconds
 
 #step 1 input
