@@ -6,6 +6,6 @@ Author: M. A. J. Zondervan-Zwijnenburg
 Maintainer: M. A. J. Zondervan-Zwijnenburg <M.A.J.Zwijnenburg@uu.nl>
 Description: Allows for the computation of a prior predictive p-value to test replication of relevant features of original studies. Relevant features are captured in informative hypotheses. The package also allows for the computation of power. The statistical underpinnings are described in Zondervan-Zwijnenburg (2019) <doi:10.31234/osf.io/uvh5s>.
 License: GPL (>= 2)
-Depends: quadprog, graphics, lavaan, blavaan, MASS, mice
+Depends: quadprog, graphics, lavaan(>= 0.6-3), blavaan, MASS, mice, runjags(>= 2.0.4-2)
 Encoding: UTF-8
 LazyData: true
