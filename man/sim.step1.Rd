@@ -25,22 +25,4 @@ M. A. J. Zondervan-Zwijnenburg}
 \seealso{
 \code{\link{simulateData}}
 }
-\examples{
-\dontrun{
-#the following example can be used, but takes >10 seconds
-
-data <- data.frame(y=ChickWeight$weight,x=ChickWeight$Time)
-
-model <- '
-y ~ x     #regression
-y ~1      #intercept not default in lavaan (but is in blavaan)
-'
-
-reg.post <- posterior.step1(y.o=data, model=model, nburnin=5000, nsample=5000)
-reg.sim  <- sim.step1(n.r = 50, post=reg.post$post,
-            pT=reg.post$pT, free.i=reg.post$free.i, nsim = 100)
-head(reg.sim$y.s[[1]])
-}
-}
-
 \keyword{models }

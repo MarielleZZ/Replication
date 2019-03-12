@@ -44,21 +44,5 @@ A user provided matrix containing the elements of (N times) the asymptotic varia
 
 \seealso{\code{\link{blavaan}}, \code{\link{lavaan}}}
 
-\examples{
-\dontrun{
-#the following example can be used, but takes >10 seconds
-
-data <- data.frame(y=ChickWeight$weight,x=ChickWeight$Time)
-
-model <- '
-y ~ x     #regression
-y ~1      #intercept not default in lavaan (but is in blavaan)
-'
-
-reg.post <- posterior.step1(y.o=data, model=model)
-reg.post$pT
-}
-}
-
 \keyword{htest }% use one of  RShowDoc("KEYWORDS")
 \keyword{models }% __ONLY ONE__ keyword per line
