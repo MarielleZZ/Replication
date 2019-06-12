@@ -64,7 +64,7 @@ ppc.step2step3 <- function(step1, y.r, model=model, H0,
   }else{
     for (i in 1:length(y.s)){
       setTxtProgressBar(pb,i)
-      fit_l <- sem(model, data=y.s[[i]],
+      fit_l <- sem(model, data=y.s[[i]],meanstructure=TRUE,
                    ordered = ordered, sample.cov = sample.cov, sample.mean = sample.mean, sample.nobs = sample.nobs,
                    group = group, cluster = cluster, constraints = "", WLS.V = WLS.V, NACOV = NACOV)
       pT.s <- parameterTable(fit_l)
@@ -108,7 +108,7 @@ ppc.step2step3 <- function(step1, y.r, model=model, H0,
 
   if(is.null(y.r)==FALSE){
     #for y.r
-    fit_r <- sem(model, data=y.r,
+    fit_r <- sem(model, data=y.r,meanstructure=TRUE,
                  ordered = ordered, sample.cov = sample.cov, sample.mean = sample.mean, sample.nobs = sample.nobs,
                  group = group, cluster = cluster, constraints = "", WLS.V = WLS.V, NACOV = NACOV)
     BKcov.r <- lavInspect(fit_r,"vcov")
