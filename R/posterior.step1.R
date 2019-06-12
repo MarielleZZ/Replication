@@ -13,7 +13,7 @@ posterior.step1 <- function(y.o, model,
     for (i in 1:imp$m){
       y.o.imp[[i]] <- complete(imp,i)
       y.o.imp[[i]] <- data.frame(sapply(y.o.imp[[i]] , function(x) as.numeric(as.character(x))))
-      fit <- bsem(model, data=y.o.imp[[i]], dp=dp,
+      fit <- bsem(model, data=y.o.imp[[i]], dp=dp, test="none",
                   sample.cov = sample.cov, sample.mean = sample.mean, sample.nobs = sample.nobs,
                   group = group, constraints = "", WLS.V = WLS.V, NACOV = NACOV,
                   n.chains=nchains, adapt = nadapt, burnin=nburnin, sample=nsample, convergence=convergence)
@@ -49,7 +49,7 @@ posterior.step1 <- function(y.o, model,
   }
 
   if(is.null(imp)==TRUE){
-    fit <- bsem(model, data=y.o, dp=dp,
+    fit <- bsem(model, data=y.o, dp=dp,test="none",
                 sample.cov = sample.cov, sample.mean = sample.mean, sample.nobs = sample.nobs,
                 group = group, constraints = "", WLS.V = WLS.V, NACOV = NACOV,
                 n.chains=nchains, adapt=nadapt, burnin=nburnin, sample=nsample, convergence=convergence)

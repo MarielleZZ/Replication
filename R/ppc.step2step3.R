@@ -30,7 +30,7 @@ ppc.step2step3 <- function(step1, y.r, model=model, H0,
     for (i in 1:length(y.s)){
       setTxtProgressBar(pb,i)
       fit_l <- bsem(model, data=y.s[[i]],
-                    n.chains=nchains, dp=dp,
+                    n.chains=nchains, dp=dp,test="none",
                     sample.cov = sample.cov, sample.mean = sample.mean, sample.nobs = sample.nobs,
                     group = group, constraints = "", WLS.V = WLS.V, NACOV = NACOV, convergence=convergence)
       pT <- parameterTable(fit_l)
