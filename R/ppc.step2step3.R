@@ -19,6 +19,7 @@ ppc.step2step3 <- function(step1, y.r, model=model, H0,
   vars <- pT1$plabel             #var names for estimated parameters
   mat <- create_matrices(varnames=c(vars),hyp=H0)
   R <- mat$R
+  if(is.vector(R)==TRUE){R<-matrix(R,nrow=1)}
   r <- mat$r
   E <- mat$E
 
